@@ -1,0 +1,14 @@
+- hosts: centos
+  tasks:
+    - name: upgrade all packages
+      yum: name=* state=latest
+
+    - name: Install docker
+      yum: name=docker state=present update_cache=yes
+      notify:
+        - restart docker
+
+  handlers:
+    - name: restart docker
+      service: name=docker state=started
+

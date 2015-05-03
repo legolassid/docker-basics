@@ -1,0 +1,27 @@
+- hosts: ubuntu
+  tasks:
+    - name: update all
+      apt: update_cache=yes
+
+    - name: add apt_key for docker
+      apt_key: url=https://get.docker.com/gpg state=present validate_certs=no
+
+    - name: add docker repo to apt_sources
+      apt_repository: repo='deb http://get.docker.com/ubuntu docker main' state=present
+
+    - name: install docker
+      apt: name=lxc-docker update_cache=yes
+      notify:
+        - restart docker
+
+    - name: add docker group
+      group: name=docker state=present
+
+    - name: add vagrant user to docker group
+      user: name=vagrant group=docker append=yes
+
+  handlers:
+    - name: restart docker
+      service: name=docker state=restarted
+
+
